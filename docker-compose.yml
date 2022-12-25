@@ -1,0 +1,72 @@
+version: '3'
+services:
+
+  ledzercustomerdbimage:
+      image: mysql:5.6
+      networks:
+        - test-network
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=ledzer_customer_db
+
+  ledzermasterdbimage:
+      image: mysql:5.6
+      networks:
+        - test-network
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=ledzer_master_db
+
+
+### Services ###       
+
+  eureka-service:
+    build: ./eureka-service
+    image: eureka-service
+    ports:
+      - "8761:8761"
+    networks:
+      - test-network
+
+  customer-service:
+    build: ./customer-service
+    image: customer-service
+    networks:
+      - test-network
+    ports:
+      - "9002:9002"
+    depends_on:
+      - eureka-service
+      - ledzercustomerdbimage
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+
+  master-service:
+    build: ./master-service
+    image: master-service
+    networks:
+      - test-network
+    ports:
+      - "9001:9001"
+    depends_on:
+      - eureka-service
+      - ledzermasterdbimage
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+
+  gateway-service:
+    build: ./gateway-service
+    image: gateway-service
+    networks:
+      - test-network
+    ports:
+      - "9191:9191"
+    depends_on:
+      - eureka-service
+      - customer-service
+      - master-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+
+networks:
+  test-network:
