@@ -1,0 +1,16 @@
+server:
+  port: 9004
+  servlet:
+    context-path: /invoices
+spring:
+  application:
+    name: invoice-service
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
