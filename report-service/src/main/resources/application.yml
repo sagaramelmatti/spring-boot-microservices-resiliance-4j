@@ -1,0 +1,16 @@
+server:
+  port: 9006
+  servlet:
+    context-path: /reports
+spring:
+  application:
+    name: report-service
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
